@@ -327,4 +327,5 @@ def ejecutar_bot():
     actualizar_github_html(html_final)
 
 if __name__ == "__main__":
+    enviar_telegram("🤖 Bot de Trading iniciado correctamente: Verificando señales de mercado...")
     ejecutar_bot()
