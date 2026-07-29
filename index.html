@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="60">
+    <title>Trading Terminal PRO</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0b0f19; color: #f1f5f9; padding: 20px; }
+        header { text-align: center; margin-bottom: 25px; }
+        h1 { color: #38bdf8; font-size: 26px; font-weight: 800; }
+        p.timestamp { color: #64748b; font-size: 13px; margin-top: 4px; }
+        .market-status { max-width: 1100px; margin: 0 auto 25px auto; background: #161e2e; border: 1px solid #1e293b; padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .status-title { font-size: 14px; color: #94a3b8; font-weight: 600; }
+        .status-pill { padding: 6px 14px; border-radius: 30px; font-weight: 700; font-size: 13px; background: #eab30822; color: #eab308; border: 1px solid #eab308; }
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        .card { background: #161e2e; border-radius: 14px; padding: 20px; border: 1px solid #1e293b; display: flex; flex-direction: column; gap: 12px; }
+        .card-buy { border: 2px solid #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.15); }
+        .card-sell { border: 2px solid #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.15); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-header h2 { font-size: 20px; color: #f8fafc; }
+        .sub-symbol { font-size: 11px; color: #64748b; text-transform: uppercase; }
+        .price-box { background: #0b0f19; padding: 12px; border-radius: 8px; text-align: center; }
+        .price-box .label { font-size: 11px; color: #64748b; text-transform: uppercase; }
+        .price { font-size: 26px; font-weight: 800; color: #38bdf8; margin-top: 2px; }
+        .metric-row { display: flex; justify-content: space-between; background: #0b0f19; padding: 10px 12px; border-radius: 8px; font-size: 13px; color: #94a3b8; }
+        .rsi-val { color: #f8fafc; font-size: 14px; }
+        .levels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .level-box { background: #0b0f19; padding: 10px; border-radius: 8px; font-size: 12px; color: #94a3b8; }
+        .level-box span { display: block; margin-bottom: 4px; font-size: 11px; }
+        .level-box strong { font-size: 14px; color: #f8fafc; }
+        .level-box.sl strong { color: #f87171; }
+        .level-box.tp strong { color: #4ade80; }
+        .chart-container { border-radius: 8px; overflow: hidden; border: 1px solid #1e293b; margin-top: 5px; }
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .neutral { background: #334155; color: #cbd5e1; }
+        .buy { background: #22c55e; color: #052e16; }
+        .sell { background: #ef4444; color: #ffffff; }
+        .btn-trade { display: block; width: 100%; text-align: center; background: #0284c7; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px; margin-top: auto; }
+        .risk-panel { max-width: 1100px; margin: 30px auto 0 auto; background: #161e2e; border-radius: 12px; padding: 20px; border: 1px solid #1e293b; }
+        .risk-panel h3 { font-size: 16px; margin-bottom: 10px; color: #38bdf8; }
+        .risk-grid { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; font-size: 13px; color: #94a3b8; }
+        .risk-grid input { background: #0b0f19; border: 1px solid #334155; padding: 8px 12px; border-radius: 6px; color: #fff; width: 100px; }
+    </style>
+</head>
+<body>
+    
+    <header>
+        <h1>📡 TERMINAL DE TRADING AUTOMÁTICA</h1>
+        <p class="timestamp">Estado en vivo (Auto-refresh 60s)</p>
+    </header>
+    <div class="market-status">
+        <span class="status-title">TERMÓMETRO DE MERCADO (RSI PROMEDIO: 44.0)</span>
+        <span class="status-pill">🟡 MERCADO EN CONSOLIDACIÓN / NEUTRO</span>
+    </div>
+    <div class="container">
+        
+    <div class="card card-neutral">
+        <div class="card-header">
+            <div><h2>EUR/USD</h2><span class="sub-symbol">FX:EURUSD</span></div>
+            <span class="badge neutral">NEUTRAL</span>
+        </div>
+        <div class="price-box"><span class="label">Precio Actual</span><div class="price">$1.13882</div></div>
+        <div class="metric-row"><span>RSI (14 p):</span><strong class="rsi-val">44.0</strong></div>
+        <div class="levels-grid">
+            <div class="level-box sl"><span>🛑 Stop Loss</span><strong>-</strong></div>
+            <div class="level-box tp"><span>🎯 Take Profit</span><strong>-</strong></div>
+        </div>
+        <div class="chart-container">
+            <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tv_EURUSD&symbol=FX:EURUSD&interval=15&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=0f172a&theme=dark&style=1&timezone=Etc%2FUTC" 
+                    width="100%" height="200" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+        <a href="https://www.tradingview.com/chart/?symbol=FX:EURUSD" target="_blank" class="btn-trade">📲 COMPRAR / OPERAR EN VIVO</a>
+    </div>
+    
+    </div>
+    <div class="risk-panel">
+        <h3>🧮 Calculadora de Gestión de Riesgo Rápida</h3>
+        <div class="risk-grid">
+            <label>Capital a arriesgar (USD): 
+                <input type="number" id="riskUsd" value="20" oninput="calcularLote()">
+            </label>
+            <label>Distancia Stop Loss (%): 
+                <input type="number" id="slPercent" value="1.5" step="0.1" oninput="calcularLote()">
+            </label>
+            <div>
+                <span>Tamaño de Posición sugerido: </span>
+                <strong id="posResult" style="color:#38bdf8; font-size: 16px;">$1,333 USD</strong>
+            </div>
+        </div>
+    </div>
+    <script>
+        function calcularLote() {
+            let riesgo = floatVal(document.getElementById('riskUsd').value);
+            let sl = floatVal(document.getElementById('slPercent').value);
+            if (sl > 0) {
+                let posicion = (riesgo / (sl / 100));
+                document.getElementById('posResult').innerText = "$" + posicion.toLocaleString('en-US', {maximumFractionDigits: 2}) + " USD";
+            }
+        }
+        function floatVal(val) { return parseFloat(val) || 0; }
+    </script>
+</body>
+</html>
