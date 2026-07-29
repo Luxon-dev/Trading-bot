@@ -1,23 +1,26 @@
+import os
 import base64
 import requests
 import pandas as pd
 
 # ---------------------------------------------------------
-# CONFIGURACIÓN DE CREDENCIALES
+# CONFIGURACIÓN DE CREDENCIALES (Leídas desde GitHub Secrets)
 # ---------------------------------------------------------
-TELEGRAM_TOKEN = "8015499766:AAGQTyV4uTToSBcXq_In14nm5dyc1oPf7FA"
-# ID de tu grupo de Telegram (debe incluir el signo menos)
-TELEGRAM_CHAT_ID = "-100XXXXXXXXXX" 
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-# Credenciales de GitHub para actualizar la Landing Page
-GITHUB_TOKEN = "ghp_TU_TOKEN_AQUI"          # Pega el token que generaste en el Paso 1
-GITHUB_REPO = "tu-usuario/trading-bot"     # Tu usuario/nombre-del-repo (ej: juanperez/trading-bot)
+GITHUB_TOKEN = os.getenv("MY_GITHUB_TOKEN")
+# ⚠️ IMPORTANTE: Reemplaza "Luxon-dev/trading-bot" por tu usuario y el nombre real de tu repositorio si es distinto
+GITHUB_REPO = "Luxon-dev/Trading-bot" 
 HTML_FILENAME = "index.html"
 
 # ---------------------------------------------------------
 # FUNCIONES DE TELEGRAM Y GITHUB
 # ---------------------------------------------------------
 def enviar_telegram(mensaje):
+    if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
+        print("⚠️ Faltan las credenciales de Telegram en los Secrets.")
+        return
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
@@ -31,7 +34,10 @@ def enviar_telegram(mensaje):
         print(f"Error enviando Telegram: {e}")
 
 def actualizar_github_html(contenido_html):
-    """Actualiza o crea el archivo index.html en el repositorio usando la API de GitHub."""
+    if not GITHUB_TOKEN:
+        print("⚠️ Falta el token de GitHub en los Secrets.")
+        return
+        
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{HTML_FILENAME}"
     headers = {
         "Authorization": f"token {GITHUB_TOKEN}",
@@ -288,22 +294,31 @@ def ejecutar_bot():
     cards, lista_rsi, hay_alerta_global = [], [], False
 
     # 1. BTC/USDT
-    df_btc = obtener_datos_cripto("BTCUSDT", interval="15m")
-    c_html, rsi_b, alt_b = analizar_y_obtener_card("BTC/USDT", df_btc)
-    cards.append(c_html); lista_rsi.append(rsi_b)
-    if alt_b: hay_alerta_global = True
+    try:
+        df_btc = obtener_datos_cripto("BTCUSDT", interval="15m")
+        c_html, rsi_b, alt_b = analizar_y_obtener_card("BTC/USDT", df_btc)
+        cards.append(c_html); lista_rsi.append(rsi_b)
+        if alt_b: hay_alerta_global = True
+    except Exception as e:
+        print(f"Error BTC: {e}")
 
     # 2. ETH/USDT
-    df_eth = obtener_datos_cripto("ETHUSDT", interval="15m")
-    c_html, rsi_e, alt_e = analizar_y_obtener_card("ETH/USDT", df_eth)
-    cards.append(c_html); lista_rsi.append(rsi_e)
-    if alt_e: hay_alerta_global = True
+    try:
+        df_eth = obtener_datos_cripto("ETHUSDT", interval="15m")
+        c_html, rsi_e, alt_e = analizar_y_obtener_card("ETH/USDT", df_eth)
+        cards.append(c_html); lista_rsi.append(rsi_e)
+        if alt_e: hay_alerta_global = True
+    except Exception as e:
+        print(f"Error ETH: {e}")
 
     # 3. EUR/USD
-    df_eur = obtener_datos_forex_eurusd()
-    c_html, rsi_eu, alt_eu = analizar_y_obtener_card("EUR/USD", df_eur, es_forex=True)
-    cards.append(c_html); lista_rsi.append(rsi_eu)
-    if alt_eu: hay_alerta_global = True
+    try:
+        df_eur = obtener_datos_forex_eurusd()
+        c_html, rsi_eu, alt_eu = analizar_y_obtener_card("EUR/USD", df_eur, es_forex=True)
+        cards.append(c_html); lista_rsi.append(rsi_eu)
+        if alt_eu: hay_alerta_global = True
+    except Exception as e:
+        print(f"Error EUR: {e}")
 
     promedio_rsi = sum(lista_rsi) / len(lista_rsi) if lista_rsi else 50
     html_final = construir_html_final(cards, promedio_rsi, hay_alerta_global)
